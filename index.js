@@ -11,8 +11,6 @@ var RedisStore = require('connect-redis')(session);
 var passwordHash = require('password-hash');
 var timeout = require('connect-timeout');
 
-var ObjectId = require('mongodb').ObjectID;
-
 var DEVELOPMENT_MODE = "development";
 var PRODUCTION_MODE = "production";
 
@@ -23,7 +21,7 @@ var config = {
 	redis_store: {
 		host: 'localhost',
 		port: '6379'
-	}, session_secret: "keyboard cat",
+	}, session_secret: "keyboard cat",  /*TODO: Put an actual Secret Key In Here*/
 	url: {
 		base: "/api",
 		version: "v1"
@@ -54,11 +52,22 @@ function haltOnTimedout(req, res, next){
 
 // Url Building Function
 function url(service, route) {
-	return config.url.base + "/" + service + "/" + config.url.version + "/" + route;
+	var full_route = config.url.base + "/" + service + "/" + config.url.version + "/" + route;
+	console.log("  '%s' Route Created", full_route);
+	return full_route;
 }
 
+// Create the Express Application Object
 var app = express();
+console.log("  Express Initialized");
+
+// Connect to the MongoDB Store
 var db = mongojs.connect(config.mongo_db_url, ["users", "assignments"]);
+console.log("  MongoDB Connection Opened");
+
+// Create the Username Index
+db.users.createIndex({username: 1}, {unique: true});
+console.log("    users.username Index Created");
 
 // Global JSON Body Parser Middleware
 var jsonParser = bodyParser.json();
@@ -78,10 +87,11 @@ var loggingHandler = morgan('dev');
 // Application Level Session Tracking Middleware Handler
 var sessionHandler = session({
 	store: new RedisStore(config.redis_store), 
-	secret: config.session_secret, /*TODO: Put an actual Secret Key In Here*/
+	secret: config.session_secret,
 	resave: false,
 	saveUninitialized: true
 });
+console.log("  Redis Store Connection Opened");
 
 app.use(timeout(config.timeout),loggingHandler, haltOnTimedout, sessionHandler, haltOnTimedout);
 
@@ -132,7 +142,7 @@ if (config.services.contains('account')) {
 
 	//Fetch User Route: GET /api/account/v1/user
 	app.get(url("account","user"), authorize, function (req, res){
-		db.users.find({_id: ObjectId(req.session.user_id)}, function (error, users){
+		db.users.find({_id: mongojs.ObjectId(req.session.user_id)}, function (error, users){
 			if (error) {
 				// Internal Server Error
 				console.log(error);
@@ -153,7 +163,7 @@ if (config.services.contains('account')) {
 			(req.body.email === undefined || req.body.email !== "") &&
 			(req.body.display_name === undefined || req.body.display_name !== "")) {
 			
-			db.users.find({_id: ObjectId(req.session.user_id)}, function (error, users){
+			db.users.find({_id: mongojs.ObjectId(req.session.user_id)}, function (error, users){
 				if (error) {
 					// Internal Server Error
 					console.log(error);
@@ -173,7 +183,7 @@ if (config.services.contains('account')) {
 						if (req.body.display_name !== undefined) {
 							updated_user['display_name'] = req.body.display_name;
 						}
-						db.users.update({_id: ObjectId(req.session.user_id)}, {$set: updated_user}, function (error, updated){
+						db.users.update({_id: mongojs.ObjectId(req.session.user_id)}, {$set: updated_user}, function (error, updated){
 							if (error || !updated) {
 								// Internal Server Error
 								console.log(error);
@@ -211,12 +221,18 @@ if (config.services.contains('account')) {
 					console.log(error);
 					res.status(500).end();
 				} else if (!users || users.length == 0) {
-					db.users.save({username: req.body.username, password: passwordHash.generate(req.body.password), email: req.body.email, display_name: req.body.display_name, active: true}, function (error, saved){
-						if (error || !saved) {
-							res.status(500).end();
-						} else {
-							res.status(201).end();
-						}
+					db.users.save({
+							username: req.body.username, 
+							password: passwordHash.generate(req.body.password), 
+							email: req.body.email, 
+							display_name: req.body.display_name, 
+							active: true}, 
+						function (error, saved){
+							if (error || !saved) {
+								res.status(500).end();
+							} else {
+								res.status(201).end();
+							}
 					});
 				} else {
 					// User allready exists with this name
