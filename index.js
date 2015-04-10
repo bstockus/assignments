@@ -10,6 +10,8 @@ var session = require('express-session');
 var RedisStore = require('connect-redis')(session);
 var passwordHash = require('password-hash');
 var timeout = require('connect-timeout');
+var qs = require('qs');
+var urllib = require('url');
 
 var DEVELOPMENT_MODE = "development";
 var PRODUCTION_MODE = "production";
@@ -114,7 +116,7 @@ if (config.services.contains('login')) {
 					res.status(404).end();
 				} else {
 					var user = users[0];
-					if (passwordHash.verify(req.body.password, user.password)) {
+					if (user.active && passwordHash.verify(req.body.password, user.password)) {
 						req.session.authorized = true;
 						req.session.user_id = user._id;
 						res.status(200).end();
@@ -250,33 +252,64 @@ if (config.services.contains('assigns')) {
 
 	console.log("Assigns Service Loaded");
 
+	//List Assignments Route: GET /api/assigns/v1/assigns
 	app.get(url("assigns","assigns"), authorize, function (req, res){
-		//List Assignments Route
-		res.send("List Assignments Route");
+		var query = qs.parse(urllib.parse(req.url).query);
+		var find = {user_id: req.session.user_id};
+		if (query.completed !== undefined && (query.completed === 'yes' || query.completed === 'no')) {
+			find['completed'] = (query.completed === 'yes');
+		}
+		db.assignments.find(find, function (error, assignments){
+			if (error) {
+				console.log(error);
+				res.status(500).end();
+			} else {
+				var results = [];
+				assignments.forEach(function (assignment){
+					results.push({
+						id: assignment._id,
+						'class': assignment['class'],
+						title: assignment.title,
+						due_date: assignment.due_date,
+						description: assignment.description,
+						completed: assignment.completed
+					});
+				});
+				res.status(200).json({
+					count: results.length,
+					assigns: results
+				});
+			}
+		});
 	});
 
+	//Fetch Assignment Route: GET /api/assigns/v1/assigns/:id
 	app.get(url("assigns","assigns/:id"), authorize, function (req, res){
-		//Fetch Assignment Route
+		
 		res.send("Fetch Assignment Route");
 	});
 
+	//Create Assignment Route: POST /api/assigns/v1/assigns
 	app.post(url("assigns","assigns"), authorize, jsonParser, function (req, res){
-		//Create Assignment Route
+		
 		res.send("Create Assignment Route");
 	});
 
+	//Update Assignment Route: PUT /api/assigns/v1/assigns/:id
 	app.put(url("assigns","assigns/:id"), authorize, jsonParser, function (req, res){
-		//Update Assignment Route
+		
 		res.send("Update Assignment Route");
 	});
 
+	//Delete Assignment Route: DELETE /api/assigns/v1/assigns/:id
 	app.delete(url("assigns","assigns/:id"), authorize, function (req, res){
-		//Delete Assignment Route
+		
 		res.send("Delete Assignment Route");
 	});
 
+	//List Classes Route: GET /api/assigns/v1/classes
 	app.get(url("assigns","classes"), authorize, function (req, res){
-		//List Classes Route
+		
 		res.send("List Classes Route");
 	});
 }
