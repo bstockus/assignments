@@ -12,6 +12,7 @@ var passwordHash = require('password-hash');
 var timeout = require('connect-timeout');
 var qs = require('qs');
 var urllib = require('url');
+var moment = require('moment');
 
 var DEVELOPMENT_MODE = "development";
 var PRODUCTION_MODE = "production";
@@ -259,6 +260,7 @@ if (config.services.contains('assigns')) {
 		if (query.completed !== undefined && (query.completed === 'yes' || query.completed === 'no')) {
 			find['completed'] = (query.completed === 'yes');
 		}
+		//TDOD: Finish query methods for this API
 		db.assignments.find(find, function (error, assignments){
 			if (error) {
 				console.log(error);
@@ -270,7 +272,7 @@ if (config.services.contains('assigns')) {
 						id: assignment._id,
 						'class': assignment['class'],
 						title: assignment.title,
-						due_date: assignment.due_date,
+						due_date: moment.unix(assignment.due_date).format("YYYY-MM-DD"),
 						description: assignment.description,
 						completed: assignment.completed
 					});
@@ -285,26 +287,129 @@ if (config.services.contains('assigns')) {
 
 	//Fetch Assignment Route: GET /api/assigns/v1/assigns/:id
 	app.get(url("assigns","assigns/:id"), authorize, function (req, res){
-		
-		res.send("Fetch Assignment Route");
+		db.assignments.findOne({user_id: req.session.user_id, _id: mongojs.ObjectId(req.params.id)}, function (error, assignment){
+			if (error) {
+				console.log(error);
+				res.status(500).end();
+			} else if (!assignment) {
+				res.status(404).end();
+			} else {
+				var result = {
+					'class': assignment['class'],
+					title: assignment.title,
+					description: assignment.description,
+					due_date: moment.unix(assignment.due_date).format("YYYY-MM-DD"),
+					'completed': assignment.completed
+				};
+				res.status(200).json(result);
+			}
+		});
 	});
 
 	//Create Assignment Route: POST /api/assigns/v1/assigns
 	app.post(url("assigns","assigns"), authorize, jsonParser, function (req, res){
-		
-		res.send("Create Assignment Route");
+		if (req.body['class'] !== undefined && req.body['class'] !== "" &&
+			req.body.title !== undefined && req.body.title !== "" &&
+			req.body.description !== undefined && req.body.description !== "" &&
+			req.body.due_date !== undefined && req.body.due_date !== "") {
+
+			var assign = {
+				'class': req.body['class'],
+				title: req.body.title,
+				description: req.body.description,
+				due_date: moment(req.body.due_date).unix(),
+				user_id: req.session.user_id,
+				'completed': false
+			};
+
+			db.assignments.insert(assign, function (error, assignment){
+				if (error || !assignment) {
+					console.log(error);
+					res.status(500).end();
+				} else {
+					res.status(201).json({
+						id: assignment._id
+					});
+				}
+			});
+
+		} else {
+			res.status(400).end();
+		}
 	});
 
 	//Update Assignment Route: PUT /api/assigns/v1/assigns/:id
 	app.put(url("assigns","assigns/:id"), authorize, jsonParser, function (req, res){
-		
-		res.send("Update Assignment Route");
+		if (((req.body['class'] !== undefined && typeof req.body['class'] == "string") || req.body['class'] === undefined) &&
+			((req.body.title !== undefined && typeof req.body.title == "string") || req.body.title === undefined) &&
+			((req.body.description !== undefined && typeof req.body.description == "string") || req.body.description === undefined) &&
+			((req.body.due_date !== undefined && typeof req.body.due_date == "string") || req.body.due_date === undefined) &&
+			((req.body.completed !== undefined && typeof req.body.completed == "boolean") || req.body.completed === undefined)) {
+
+			var assign = {};
+
+			if (req.body['class'] !== undefined) {
+				assign['class'] = req.body['class'];
+			}
+
+			if (req.body.title !== undefined) {
+				assign['title'] = req.body.title;
+			}
+
+			if (req.body.description !== undefined) {
+				assign['description'] = req.body.description;
+			}
+
+			if (req.body.due_date !== undefined) {
+				assign['due_date'] = moment(req.body.due_date).unix();
+			}
+
+			if (req.body.completed !== undefined) {
+				assign['completed'] = req.body.completed;
+			}
+
+			db.assignments.findOne({_id: mongojs.ObjectId(req.params.id), user_id: req.session.user_id}, function (error, assignment){
+				if (error) {
+					console.log(error);
+					res.status(500).end();
+				} else if (!assignment) {
+					res.status(404).end();
+				} else {
+					db.assignments.update({_id: mongojs.ObjectId(assignment._id), user_id: req.session.user_id}, {$set: assign}, function (error, assignment){
+						if (error) {
+							console.log(error);
+							res.status(500).end();
+						} else {
+							res.status(200).end();
+						}
+					});
+				}
+			});
+
+		} else {
+			res.send(400).end();
+		}
 	});
 
 	//Delete Assignment Route: DELETE /api/assigns/v1/assigns/:id
 	app.delete(url("assigns","assigns/:id"), authorize, function (req, res){
-		
-		res.send("Delete Assignment Route");
+		db.assignments.findOne({_id: mongojs.ObjectId(req.params.id), user_id: req.session.user_id}, function (error, assignment){
+			if (error) {
+				console.log(error);
+				res.status(500).end();
+			} else if (!assignment) {
+				res.status(404).end();
+			} else {
+				db.assignments.remove({_id: mongojs.ObjectId(assignment._id), user_id: req.session.user_id}, function (error){
+					if (error) {
+						console.log(error);
+						res.status(500).end();
+					} else {
+						res.status(204).end();
+					}
+				});
+			}
+		});
 	});
 
 	//List Classes Route: GET /api/assigns/v1/classes
