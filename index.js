@@ -414,8 +414,28 @@ if (config.services.contains('assigns')) {
 
 	//List Classes Route: GET /api/assigns/v1/classes
 	app.get(url("assigns","classes"), authorize, function (req, res){
-		
-		res.send("List Classes Route");
+		db.assignments.aggregate([
+			{$match: {
+				user_id: req.session.user_id
+			}}, {$group: {
+				_id: "$class",
+				count: { $sum: 1 }
+			}}
+		], function (error, classes){
+			if (error) {
+				console.log(error);
+				res.status(500).end();
+			} else {
+				var results = [];
+				classes.forEach(function (klass){
+					results.push(klass._id);
+				});
+				res.json({
+					count: results.length,
+					classes: results
+				});
+			}
+		});
 	});
 }
 
