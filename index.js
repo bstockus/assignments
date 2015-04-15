@@ -22,8 +22,8 @@ var config = {
 	mode: DEVELOPMENT_MODE,
 	mongo_db_url: "mongodb://10.244.102.234:27017/assignments",
 	redis_store: {
-		host: "10.244.184.100",
-		port: "26379"
+		host: "10.244.74.49",
+		port: "6379"
 	}, session_secret: "keyboard cat",  /*TODO: Put an actual Secret Key In Here*/
 	url: {
 		base: "/api",
