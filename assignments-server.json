@@ -1,0 +1,25 @@
+{
+  "id": "assignments",
+  "kind": "ReplicationController",
+  "apiVersion": "v1beta1",
+  "desiredState": {
+    "replicas": 1,
+    "replicaSelector": {"name": "ladel", "role": "assignments"},
+    "podTemplate": {
+      "desiredState": {
+        "manifest": {
+          "version": "v1beta1",
+          "id": "assignments-server",
+          "containers": [{
+            "name": "assignments-server",
+            "image": "bstockus/assignments-server",
+            "cpu": 100,
+            "ports": [{"name": "assignments-server-http", "containerPort": 3000}]
+          }]
+        }
+      },
+      "labels": { "name": "ladel", "role": "assignments" }
+    }
+  },
+  "labels": { "name": "ladel", "role": "assignments" }
+}
