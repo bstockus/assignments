@@ -1,0 +1,15 @@
+[Unit]
+Description=Mongo
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker kill mongo1
+ExecStartPre=-/usr/bin/docker rm mongo1
+ExecStartPre=/usr/bin/docker pull mongo
+ExecStart=/usr/bin/docker run --name mongo1 -p 27017:27017 mongo mongod --smallfiles
+ExecStop=/usr/bin/docker stop mongo1
+
+[X-Fleet]
+MachineMetadata=node=db-mongo

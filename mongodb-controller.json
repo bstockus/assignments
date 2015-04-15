@@ -1,0 +1,25 @@
+{
+  "id": "mongodb",
+  "kind": "ReplicationController",
+  "apiVersion": "v1beta1",
+  "desiredState": {
+    "replicas": 1,
+    "replicaSelector": {"name": "spatula", "role": "mongodb"},
+    "podTemplate": {
+      "desiredState": {
+        "manifest": {
+          "version": "v1beta1",
+          "id": "mongodb",
+          "containers": [{
+            "name": "mongodb",
+            "image": "dockerfile/mongodb",
+            "cpu": 100,
+            "ports": [{"name": "mongodb-server", "containerPort": 27017}]
+          }]
+        }
+      },
+      "labels": { "name": "spatula", "role": "mongodb" }
+    }
+  },
+  "labels": { "name": "spatula", "role": "mongodb" }
+}

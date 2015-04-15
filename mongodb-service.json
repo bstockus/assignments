@@ -1,0 +1,9 @@
+{
+  "apiVersion": "v1beta1",
+  "kind": "Service",
+  "id": "mongodb",
+  "port": 27017,
+  "containerPort": "mongodb-server",
+  "labels": { "name": "spatula", "role": "mongodb" },
+  "selector": { "name": "spatula", "role": "mongodb" }
+}

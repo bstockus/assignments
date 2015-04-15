@@ -20,10 +20,10 @@ var PRODUCTION_MODE = "production";
 // Configuration Object
 var config = {
 	mode: DEVELOPMENT_MODE,
-	mongo_db_url: "mongodb://localhost/assignments",
+	mongo_db_url: "mongodb://" + process.ENV.MONGODB_SERVICE_HOST + ":" + process.ENV.MONGODB_SERVICE_PORT + "/assignments",
 	redis_store: {
-		host: 'localhost',
-		port: '6379'
+		host: process.ENV.REDIS_SERVICE_HOST,
+		port: process.ENV.REDIS_SERVICE_PORT
 	}, session_secret: "keyboard cat",  /*TODO: Put an actual Secret Key In Here*/
 	url: {
 		base: "/api",
