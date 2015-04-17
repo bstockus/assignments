@@ -18,7 +18,8 @@
           }]
         }
       },
-      "labels": { "name": "spatula", "role": "mongodb" }
+      "labels": { "name": "spatula", "role": "mongodb" },
+      "nodeSelector": {"tier": "db"}
     }
   },
   "labels": { "name": "spatula", "role": "mongodb" }

@@ -1,0 +1,9 @@
+{
+  "apiVersion": "v1beta1",
+  "kind": "Service",
+  "id": "redis",
+  "port": 6379,
+  "containerPort": "redis-server",
+  "labels": { "name": "fork", "role": "redis" },
+  "selector": { "name": "fork", "role": "redis" }
+}

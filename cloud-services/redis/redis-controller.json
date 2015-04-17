@@ -1,0 +1,26 @@
+{
+  "id": "redis",
+  "kind": "ReplicationController",
+  "apiVersion": "v1beta1",
+  "desiredState": {
+    "replicas": 1,
+    "replicaSelector": {"name": "fork", "role": "redis"},
+    "podTemplate": {
+      "desiredState": {
+        "manifest": {
+          "version": "v1beta1",
+          "id": "redis",
+          "containers": [{
+            "name": "redis",
+            "image": "dockerfile/redis",
+            "cpu": 100,
+            "ports": [{"name": "redis-server", "containerPort": 6379}]
+          }]
+        }
+      },
+      "labels": { "name": "fork", "role": "redis" },
+      "nodeSelector": {"tier": "cache"}
+    }
+  },
+  "labels": { "name": "fork", "role": "redis" }
+}

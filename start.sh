@@ -11,4 +11,4 @@ cd assignments
 
 npm install
 
-node ./index.js
+nodejs index.js

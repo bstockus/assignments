@@ -1,0 +1,9 @@
+{
+  "apiVersion": "v1beta1",
+  "kind": "Service",
+  "id": "assignments",
+  "port": 3000,
+  "containerPort": "assignments-server-http",
+  "labels": { "name": "ladel", "role": "assignments" },
+  "selector": { "name": "ladel", "role": "assignments" }
+}

@@ -12,13 +12,14 @@
           "id": "assignments-server",
           "containers": [{
             "name": "assignments-server",
-            "image": "bstockus/assignments-server",
+            "image": "bstockus/assignments-server:latest",
             "cpu": 100,
-            "ports": [{"name": "assignments-server-http", "containerPort": 3000}]
+            "ports": [{"name": "assignments-server-http", "containerPort": 3000, "hostPort": 3000}]
           }]
         }
       },
-      "labels": { "name": "ladel", "role": "assignments" }
+      "labels": { "name": "ladel", "role": "assignments" },
+      "nodeSelector": {"tier": "app"}
     }
   },
   "labels": { "name": "ladel", "role": "assignments" }
