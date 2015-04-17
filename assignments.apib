@@ -1,0 +1,164 @@
+# Assignments API
+## GET /ping
+
++ Response 200 (text/html; charset=UTF-8)
+
+    + Headers
+
+            Transfer-Encoding: Identity
+            X-Powered-By: Express
+
+
+## GET /api/assigns/v1/classes
+
++ Response 200 (application/json; charset=utf-8)
+
+    + Headers
+
+            X-Powered-By: Express
+            Etag: W/"18-a3d84b2"
+
+    + Body
+
+            {"count":0,"classes":[]}
+
+## DELETE /api/assigns/v1/assigns/55297e4b4ba570ba28169f81
+
++ Response 404
+
+    + Headers
+
+            Transfer-Encoding: Identity
+            X-Powered-By: Express
+
+
+## PUT /api/assigns/v1/assigns/552978664f76bcfb4329c8df
+
++ Request
+
+        {"completed":true}
+
++ Response 200 (text/html; charset=utf-8)
+
+    + Headers
+
+            Etag: W/"17-ba81c289"
+            X-Powered-By: Express
+
+    + Body
+
+            Update Assignment Route
+
+## POST /api/assigns/v1/assigns/
+
++ Request
+
+        {"class":"","title":"Assignment 99","description":"The first Assignment","due_date":"2015-04-15"}
+
++ Response 201 (application/json; charset=utf-8)
+
+    + Headers
+
+            Etag: W/"21-adfe3eac"
+            X-Powered-By: Express
+
+    + Body
+
+            {"id":"55297ea25c068d37445a95f1"}
+
+## GET /api/assigns/v1/assigns/55297ea25c068d37445a95f1
+
++ Response 200 (application/json; charset=utf-8)
+
+    + Headers
+
+            Etag: W/"7a-5d6b0128"
+            X-Powered-By: Express
+
+    + Body
+
+            {"class":"Class 2","title":"Assignment 99","description":"The first Assignment","due_date":"2015-04-15","completed":false}
+
+## GET /api/assigns/v1/assigns
+
++ Response 200 (application/json; charset=utf-8)
+
+    + Headers
+
+            X-Powered-By: Express
+            Etag: W/"18-3b4bd831"
+
+    + Body
+
+            {"count":0,"assigns":[]}
+
+## PUT /api/account/v1/user
+
++ Request
+
+        {"current_password":"password2","email":"hello@example.com"}
+
++ Response 200 (text/plain; charset=utf-8)
+
+    + Headers
+
+            Etag: W/"2-d736d92d"
+            X-Powered-By: Express
+
+    + Body
+
+            OK
+
+## GET /api/account/v1/user
+
++ Response 200 (application/json; charset=utf-8)
+
+    + Headers
+
+            X-Powered-By: Express
+            Etag: W/"48-f2d74349"
+
+    + Body
+
+            {"username":"user2","email":"user1@example.com","display_name":"User 1"}
+
+## POST /api/account/v1/user
+
++ Request
+
+        {"username":"user2","password":"password","email":"user1@example.com","display_name":"User 1"}
+
++ Response 201
+
+    + Headers
+
+            Transfer-Encoding: Identity
+            X-Powered-By: Express
+
+
+
+## POST /api/login/v1/logout
+
++ Response 403
+
+    + Headers
+
+            Transfer-Encoding: Identity
+            X-Powered-By: Express
+
+
+
+## POST /api/login/v1/login
+
++ Request
+
+        {"password":"password","username":"user2"}
+
++ Response 200 (text/html; charset=UTF-8)
+
+    + Headers
+
+            Transfer-Encoding: Identity
+            X-Powered-By: Express
+
+

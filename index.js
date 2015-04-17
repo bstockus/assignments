@@ -87,6 +87,13 @@ var authorize = function (req, res, next){
 // Application Level Development Style Logger to STDOUT
 var loggingHandler = morgan('dev');
 
+// Application Level CORS Enabler
+var corsEnable = function (req, res, next){
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+}
+
 // Application Level Session Tracking Middleware Handler
 var sessionHandler = session({
 	store: new RedisStore(config.redis_store), 
@@ -96,7 +103,7 @@ var sessionHandler = session({
 });
 console.log("  Redis Store Connection Opened");
 
-app.use(timeout(config.timeout),loggingHandler, haltOnTimedout, sessionHandler, haltOnTimedout);
+app.use(timeout(config.timeout),loggingHandler, haltOnTimedout, sessionHandler, haltOnTimedout, corsEnable, haltOnTimedout);
 
 // Login Service
 if (config.services.contains('login')) {
