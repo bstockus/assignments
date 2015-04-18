@@ -106,6 +106,9 @@ console.log("  Redis Store Connection Opened");
 
 app.use(timeout(config.timeout),loggingHandler, haltOnTimedout, sessionHandler, haltOnTimedout, corsEnable, haltOnTimedout);
 
+// Map Web Client Static Files
+app.use("/web", express.static(__dirname + '/client-web'));
+
 // Login Service
 if (config.services.contains('login')) {
 
