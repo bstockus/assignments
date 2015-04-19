@@ -10,11 +10,11 @@ window.HeaderView = Backbone.View.extend({
     },
 
     events:{
-        "click .new":"newAssign"
+        "click #new":"newAssign"
     },
 
     newAssign:function (event) {
-        app.navigate("assign/new", true);
+        assignsApp.navigate("assign/new", true);
         return false;
     }
 

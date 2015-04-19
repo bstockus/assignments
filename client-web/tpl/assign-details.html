@@ -1,24 +1,29 @@
-<div class="form-left-col">
-	
-	<label>Id:</label>
-    <input id="wineId" name="id" type="text" value="<%= id %>" disabled />
+<form>
+  <div class="form-group">
+    <label>Id:</label>
+    <input class="form-control" id="assignId" name="id" type="text" value="<%= id %>" disabled />
+  </div>
 
+  <div class="form-group">
     <label>Title:</label>
-    <input type="text" id="title" name="title" value="<%= title %>" required/>
+    <input class="form-control" type="text" id="title" name="title" value="<%= title %>" required/>
+  </div>
 
+  <div class="form-group">
     <label>Class:</label>
-    <input type="text" id="class" name="class" value="<%= klass %>"/>
+    <input class="form-control" type="text" id="class" name="class" value="<%= klass %>"/>
+  </div>
 
+  <div class="form-group">
     <label>Description:</label>
-    <input type="text" id="description" name="description" value="<%= description %>"/>
+    <input class="form-control" type="text" id="description" name="description" value="<%= description %>"/>
+  </div>
 
+  <div class="form-group">
     <label>Due Date:</label>
-    <input type="text" id="due_date" name="due_date"  value="<%= due_date %>"/>
+    <input class="form-control" type="text" id="due_date" name="due_date"  value="<%= due_date %>"/>
+  </div>
 
-    <button class="save">Save</button>
-    <button class="delete">Delete</button>
-</div>
-
-<div class="form-right-col">
-    
-</div>
+  <button type="button" class="btn btn-primary save">Save</button>
+  <button type="button" class="btn btn-danger delete">Delete</button>
+</form>

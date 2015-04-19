@@ -1,6 +1,16 @@
-<% if (completed) { %>
-	<input type="checkbox" id="completed" checked="true">
-<% } else { %>
-	<input type="checkbox" id="completed">
-<% } %>
-<a href='#assign/<%= id %>'><%= title %></a>
+<span class="pull-left assignments-completed-span">
+	<% if (completed) { %>
+		<input type="checkbox" id="completed" checked="true">
+	<% } else { %>
+		<input type="checkbox" id="completed">
+	<% } %>
+</span>
+<div class="assignments-inner-container">
+	<p>
+		<span class="pull-right"><%= moment(due_date, "YYYY-MM-DD").fromNow() %></span>
+		<strong><%= title %></strong>
+	</p>
+	<p>
+		<span class="label label-success"><%= klass %></span>
+	</p>
+</div>

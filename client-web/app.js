@@ -33,29 +33,37 @@ $.ajax({
 	        "assign/new":"newAssign",
 	        "assign/:id":"assignDetails"
 	    },
+
+	    assignmentsListView: null,
 	 
 	    initialize:function () {
 	        $('#header').html(new HeaderView().render().el);
 	    },
 	 
 	    list:function () {
-	        this.before();
+	    	console.log("list");
+	        this.before(null);
 	    },
 	 
 	    assignDetails:function (id) {
-	        this.before(function () {
-	            var assign = app.assignList.get(id);
-	            app.showView('#content', new AssignmentView({model:assign}));
+	    	console.log("assignDetails: " + id);
+	        this.before(id, function () {
+	        	//assignsApp.assignmentsListView.clearAllSelections();
+	            var assign = assignsApp.assignList.get(id);
+	            assignsApp.showView('#content', new AssignmentView({model:assign}));
 	        });
 	    },
 
 	    newAssign:function () {
-	        this.before(function () {
-	            app.showView('#content', new AssignmentView({model:new Assignment()}));
+	    	console.log("new")
+	        this.before(null, function () {
+	        	assignsApp.assignmentsListView.setSelectedItem(null);
+	            assignsApp.showView('#content', new AssignmentView({model:new Assignment()}));
 	        });
 	    },
 
 	    showView:function (selector, view) {
+	    	console.log("showView");
 	        if (this.currentView)
 	            this.currentView.close();
 	        $(selector).html(view.render().el);
@@ -63,22 +71,22 @@ $.ajax({
 	        return view;
 	    },
 
-	    before:function (callback) {
-	        if (this.assignList) {
-	            if (callback) callback();
-	        } else {
-	            this.assignList = new AssignmentsCollection();
-	            this.assignList.fetch({success:function () {
-	                $('#sidebar').html(new AssignmentsListView({model:app.assignList}).render().el);
-	                if (callback) callback();
-	            }});
-	        }
-    }
+	    before:function (id, callback) {
+	    	console.log("before: " + id);
+            this.assignList = new AssignmentsCollection();
+            var _this = this;
+            this.assignList.fetch({success:function (){
+            	var assignmentsListView = new AssignmentsListView({model:assignsApp.assignList, initialSelectedItemId: id});
+            	_this.assignmentsListView = assignmentsListView;
+                $('#sidebar').html(assignmentsListView.render().el);
+                if (callback) callback();
+            }});
+    	}
 	 
 	});
 	 
 	tpl.loadTemplates(['header', 'assign-details', 'assign-list-item'], function () {
-	    app = new AppRouter();
+	    window.assignsApp = new AppRouter();
 	    Backbone.history.start();
 	});
 

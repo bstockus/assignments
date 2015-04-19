@@ -9,9 +9,16 @@ window.AssignmentView = Backbone.View.extend({
     },
 
     render:function (eventName) {
+        console.log("detailsRender");
         var _model = this.model.toJSON();
         _model.klass = _model['class'];
         $(this.el).html(this.template(_model));
+        $('#due_date', this.el).datepicker({
+            format: "yyyy-mm-dd"
+        });
+        if (this.model.isNew()) {
+            $('#assignId', this.el).val("NEW");
+        }
         return this;
     },
 
@@ -23,11 +30,6 @@ window.AssignmentView = Backbone.View.extend({
 
     change:function (event) {
         var target = event.target;
-        console.log('changing ' + target.id + ' from: ' + target.defaultValue + ' to: ' + target.value);
-        // You could change your model on the spot, like this:
-        // var change = {};
-        // change[target.name] = target.value;
-        // this.model.set(change);
     },
 
     saveAssign:function () {
@@ -39,9 +41,10 @@ window.AssignmentView = Backbone.View.extend({
         });
         if (this.model.isNew()) {
             var self = this;
-            app.assignList.create(this.model, {
+            assignsApp.assignList.create(this.model, {
                 success:function () {
-                    app.navigate('assign/' + self.model.id, false);
+                    console.log("success");
+                    assignsApp.navigate('assign/' + self.model.id, true);
                 }
             });
         } else {
@@ -55,7 +58,7 @@ window.AssignmentView = Backbone.View.extend({
         this.model.destroy({
             success:function () {
                 alert('Assignment deleted successfully');
-                window.history.back();
+                assignsApp.navigate("", {trigger: true});
             }
         });
         return false;

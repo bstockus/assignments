@@ -2,21 +2,47 @@
 <html>
     <head>
         <title>Assignments</title>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.0/css/bootstrap-datepicker3.min.css">
+        <link rel="stylesheet" href="styles.css">
     </head>
 
     <body>
+        
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Assignments</a>
+                </div>
+                <div id="navbar" class="collapse navbar-collapse">
+                    <form class="navbar-form navbar-left" id="header"></form>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
 
-        <div id="header"><span class="title">Assignments</span></div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6" id="sidebar"></div>
+                <div class="col-md-6" id="content"></div>                
+            </div>
+        </div>
 
-        <div id="sidebar"></div>
-
-        <div id="content"></div>
+        
 
         <!-- JavaScript -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
-        
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.0/js/bootstrap-datepicker.min.js"></script>
+        <script src="lib/moment.min.js"></script>
 
         <script src="js/util.js"></script>
         <script src="js/models/assignmodel.js"></script>
